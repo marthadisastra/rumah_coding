@@ -1,0 +1,12 @@
+<?= $this->extend('admin/layout') ?>
+
+<?= $this->section('content') ?>
+<?php $summary = $summary ?? ['activationRate' => 0, 'instanceOpenRate' => 0, 'queueSuccessRate' => 0, 'portfolioPublishRate' => 0]; $topTenants = $topTenants ?? []; ?>
+<div class="row">
+    <div class="col-md-3 grid-margin stretch-card"><div class="card card-shell"><div class="card-body"><p class="text-muted mb-2">Activation Rate</p><h3><?= esc((string) $summary['activationRate']) ?>%</h3><p class="small text-muted mb-0">Tenant aktif dibanding total tenant.</p></div></div></div>
+    <div class="col-md-3 grid-margin stretch-card"><div class="card card-shell"><div class="card-body"><p class="text-muted mb-2">Instance Open Rate</p><h3><?= esc((string) $summary['instanceOpenRate']) ?>%</h3><p class="small text-muted mb-0">Instance online dibanding total instance.</p></div></div></div>
+    <div class="col-md-3 grid-margin stretch-card"><div class="card card-shell"><div class="card-body"><p class="text-muted mb-2">Queue Success Rate</p><h3><?= esc((string) $summary['queueSuccessRate']) ?>%</h3><p class="small text-muted mb-0">Pesan sent dibanding total queue.</p></div></div></div>
+    <div class="col-md-3 grid-margin stretch-card"><div class="card card-shell"><div class="card-body"><p class="text-muted mb-2">Portfolio Publish Rate</p><h3><?= esc((string) $summary['portfolioPublishRate']) ?>%</h3><p class="small text-muted mb-0">Portfolio published dibanding total portfolio.</p></div></div></div>
+</div>
+<div class="card card-shell-table"><div class="card-body"><h4 class="section-title">Top Tenant Performance</h4><p class="section-copy mb-3">Membantu owner melihat tenant yang paling aktif dan tenant yang berisiko.</p><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Owner</th><th>Status</th><th>Instances</th><th>Queues</th><th>Failed</th></tr></thead><tbody><?php if ($topTenants === []): ?><tr><td colspan="5" class="text-center text-muted py-4">Belum ada data tenant performance.</td></tr><?php endif; ?><?php foreach ($topTenants as $row): ?><tr><td><strong><?= esc($row['owner_name']) ?></strong></td><td><?= esc($row['status']) ?></td><td><?= esc((string) ($row['total_instances'] ?? 0)) ?></td><td><?= esc((string) ($row['total_queues'] ?? 0)) ?></td><td><?= esc((string) ($row['failed_queues'] ?? 0)) ?></td></tr><?php endforeach; ?></tbody></table></div></div></div>
+<?= $this->endSection() ?>
