@@ -12,6 +12,35 @@ $routes->get('api-reference', 'Home::api');
 $routes->get('pricing', 'Home::pricing');
 $routes->get('status', 'Home::status');
 
+// =====================================================================
+// TENANT AUTHENTICATION ROUTES
+// =====================================================================
+$routes->group('tenant', ['namespace' => 'App\Controllers\Tenant'], function($routes) {
+    // Public routes (tidak perlu login)
+    $routes->get('login', 'AuthController::login');
+    $routes->post('doLogin', 'AuthController::doLogin', ['filter' => 'ratelimit']);
+    $routes->get('register', 'AuthController::register');
+    $routes->post('doRegister', 'AuthController::doRegister', ['filter' => 'ratelimit']);
+    $routes->get('forgot-password', 'AuthController::forgotPassword');
+    $routes->post('doForgotPassword', 'AuthController::doForgotPassword', ['filter' => 'ratelimit']);
+    
+    // Protected routes (harus login)
+    $routes->group('', ['filter' => 'tenant_auth'], function($routes) {
+        $routes->get('logout', 'AuthController::logout');
+        $routes->get('dashboard', 'DashboardController::index');
+        $routes->get('profile', 'ProfileController::index');
+        $routes->post('profile/update', 'ProfileController::update');
+        $routes->get('instances', 'InstanceController::index');
+        $routes->get('instances/create', 'InstanceController::create');
+        $routes->post('instances/store', 'InstanceController::store');
+        $routes->get('instances/(:num)', 'InstanceController::show/$1');
+        $routes->post('instances/(:num)/delete', 'InstanceController::delete/$1');
+        $routes->get('messages', 'MessageController::index');
+        $routes->post('messages/send', 'MessageController::send');
+        $routes->get('messages/history', 'MessageController::history');
+    });
+});
+
 // Admin panel routes
 $routes->get('admin/login', 'Admin::login');
 $routes->post('admin/login', 'Admin::authenticate');
