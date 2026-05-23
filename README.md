@@ -1,69 +1,395 @@
-# CodeIgniter 4 Application Starter
+# 🚀 WA Gateway - Enterprise WhatsApp Gateway Service
 
-## What is CodeIgniter?
+Platform WhatsApp Gateway unofficial berbasis CodeIgniter 4 untuk layanan B2B multi-tenant.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## 📋 Daftar Isi
+- [Fitur](#fitur)
+- [Persyaratan Sistem](#persyaratan-sistem)
+- [Instalasi](#instalasi)
+- [Konfigurasi](#konfigurasi)
+- [Struktur Database](#struktur-database)
+- [API Endpoints](#api-endpoints)
+- [Keamanan](#keamanan)
+- [Development](#development)
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+## ✨ Fitur
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+### Untuk Tenant (Pengguna)
+- ✅ **Autentikasi Aman**: Login/register dengan password hashing bcrypt
+- ✅ **Multi-Instance**: Kelola beberapa instance WhatsApp sekaligus
+- ✅ **Dashboard Real-time**: Statistik penggunaan dan monitoring
+- ✅ **Kirim Pesan**: Single message, bulk messaging, scheduled messages
+- ✅ **Queue System**: Antrian pesan otomatis dengan retry mechanism
+- ✅ **Riwayat Pesan**: Tracking status pengiriman pesan
+- ✅ **Profile Management**: Kelola akun dan pengaturan
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+### Untuk Admin
+- ✅ **Tenant Management**: Kelola akun tenant
+- ✅ **Instance Monitoring**: Monitor semua instance aktif
+- ✅ **Content Management**: Kelola konten website
+- ✅ **Pricing Management**: Kelola paket harga
+- ✅ **Portfolio Management**: Tampilkan software lain sebagai portfolio
 
-## Installation & updates
+### Keamanan
+- ✅ CSRF Protection (aktif global)
+- ✅ Password Hashing (bcrypt cost 12)
+- ✅ Rate Limiting (5 request/menit per endpoint)
+- ✅ Secure Headers
+- ✅ Input Validation
+- ✅ Session-based Authentication
+- ✅ Webhook Signature Verification
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+## 💻 Persyaratan Sistem
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+### Minimum
+- PHP 8.1+
+- MySQL 5.7+ / MariaDB 10.3+
+- Web Server (Apache/Nginx)
+- 1GB RAM
+- 5GB Storage
 
-## Setup
+### Recommended
+- PHP 8.2+
+- MySQL 8.0+ / MariaDB 10.6+
+- Nginx + PHP-FPM
+- 2GB RAM
+- 10GB+ Storage
+- SSL/TLS Certificate
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+## 📦 Instalasi
 
-## Important Change with index.php
+### 1. Clone Repository
+```bash
+git clone <repository-url> wa-gateway
+cd wa-gateway
+```
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+### 2. Install Dependencies
+```bash
+composer install
+```
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+### 3. Setup Environment
+```bash
+cp env .env
+```
 
-**Please** read the user guide for a better explanation of how CI4 works!
+Edit file `.env` dan sesuaikan konfigurasi:
 
-## Repository Management
+```env
+CI_ENVIRONMENT = production
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+# Database
+database.default.hostname = localhost
+database.default.database = wa_gateway
+database.default.username = root
+database.default.password = your_password
+database.default.DBDriver = MySQLi
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+# Encryption Key (generate dengan: php spark key:generate)
+encryption.key = hex:your_encryption_key
 
-## Server Requirements
+# Security
+security.csrfProtection = session
+security.tokenRandomize = true
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+# Email (untuk reset password & notifikasi)
+email.fromEmail = noreply@yourdomain.com
+email.fromName = 'WA Gateway'
+email.SMTPHost = smtp.gmail.com
+email.SMTPUser = your_email@gmail.com
+email.SMTPPass = your_app_password
+email.SMTPPort = 587
+```
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+### 4. Migrate Database
+```bash
+php spark migrate
+```
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+### 5. Set Permissions
+```bash
+chmod -R 755 writable/
+chown -R www-data:www-data writable/
+```
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+### 6. Setup Web Server
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+#### Nginx Configuration
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com;
+    
+    ssl_certificate /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
+    
+    root /var/www/wa-gateway/public;
+    index index.php;
+    
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+    
+    location ~ /\.ht {
+        deny all;
+    }
+    
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+}
+
+# Redirect HTTP to HTTPS
+server {
+    listen 80;
+    server_name yourdomain.com;
+    return 301 https://$server_name$request_uri;
+}
+```
+
+## 🔧 Konfigurasi
+
+### Evolution API Integration
+1. Install Evolution API di server terpisah
+2. Dapatkan API URL dan API Key
+3. Update konfigurasi di `app/Config/WaGateway.php`:
+
+```php
+return [
+    'api_url' => 'https://evolution.yourdomain.com',
+    'api_key' => 'your_evolution_api_key',
+    'webhook_secret' => 'your_webhook_secret',
+];
+```
+
+### Queue Worker (Optional - untuk production)
+Untuk memproses antrian pesan di background:
+
+```bash
+# Buat systemd service
+sudo nano /etc/systemd/system/wa-queue.service
+```
+
+```ini
+[Unit]
+Description=WA Gateway Queue Worker
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/wa-gateway
+ExecStart=/usr/bin/php spark queue:work
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+# Enable dan start service
+sudo systemctl enable wa-queue
+sudo systemctl start wa-queue
+sudo systemctl status wa-queue
+```
+
+## 🗄️ Struktur Database
+
+### Tabel Utama
+
+#### `tenants`
+- id (BIGINT, PK)
+- owner_name (VARCHAR)
+- email (VARCHAR, UNIQUE)
+- password (VARCHAR, hashed)
+- status (ENUM: active/inactive/suspended)
+- created_at, updated_at
+
+#### `wa_instances`
+- id (BIGINT, PK)
+- tenant_id (BIGINT, FK)
+- name (VARCHAR)
+- instance_id (VARCHAR, UNIQUE)
+- phone (VARCHAR)
+- status (ENUM)
+- webhook_url (VARCHAR)
+- config (JSON)
+- created_at, updated_at
+
+#### `message_queues`
+- id (BIGINT, PK)
+- tenant_id (BIGINT, FK)
+- instance_id (BIGINT, FK)
+- phone (VARCHAR)
+- message (TEXT)
+- type (VARCHAR)
+- status (ENUM)
+- priority (TINYINT)
+- scheduled_at (DATETIME)
+- sent_at (DATETIME)
+- error_message (TEXT)
+- created_at, updated_at
+
+#### `pricing_packages`
+- id, name, price, features (JSON), is_active, created_at
+
+#### `portfolios`
+- id, title, description, image_url, demo_url, github_url, tech_stack (JSON), order, is_featured
+
+## 🌐 API Endpoints
+
+### Public Endpoints
+```
+GET  /                    - Landing page
+GET  /pricing             - Pricing packages
+GET  /api-reference       - API documentation
+GET  /status              - System status
+GET  /privacy-policy      - Privacy policy
+GET  /terms-of-service    - Terms of service
+```
+
+### Tenant Authentication
+```
+GET  /tenant/login                 - Login form
+POST /tenant/doLogin               - Process login (rate limited)
+GET  /tenant/register              - Register form
+POST /tenant/doRegister            - Process registration (rate limited)
+GET  /tenant/forgot-password       - Forgot password form
+POST /tenant/doForgotPassword      - Process reset request (rate limited)
+GET  /tenant/logout                - Logout
+```
+
+### Tenant Dashboard (Protected)
+```
+GET  /tenant/dashboard             - Dashboard overview
+GET  /tenant/profile               - Profile page
+POST /tenant/profile/update        - Update profile
+GET  /tenant/instances             - List instances
+GET  /tenant/instances/create      - Create instance form
+POST /tenant/instances/store       - Store new instance
+GET  /tenant/instances/:id         - Instance detail
+POST /tenant/instances/:id/delete  - Delete instance
+GET  /tenant/messages              - Messages page
+POST /tenant/messages/send         - Send message
+GET  /tenant/messages/history      - Message history
+```
+
+### Admin Panel
+```
+GET  /admin/login                  - Admin login
+POST /admin/login                  - Admin authenticate
+GET  /admin                        - Admin dashboard
+GET  /admin/tenants                - Manage tenants
+GET  /admin/instances              - Monitor instances
+GET  /admin/pricing                - Manage pricing
+GET  /admin/portfolio              - Manage portfolio
+GET  /admin/content                - Manage content
+```
+
+## 🔒 Keamanan
+
+### Best Practices yang Diterapkan
+
+1. **CSRF Protection**: Aktif di semua form POST
+2. **Password Hashing**: bcrypt dengan cost 12
+3. **Rate Limiting**: 5 request per menit per IP per endpoint
+4. **Secure Headers**: X-Frame-Options, X-Content-Type-Options, dll
+5. **Input Validation**: Semua input divalidasi sebelum diproses
+6. **SQL Injection Prevention**: Menggunakan prepared statements
+7. **XSS Protection**: Output escaping di semua view
+8. **Session Security**: HTTPOnly cookies, secure flags
+
+### Rekomendasi Tambahan untuk Production
+
+1. **SSL/TLS**: Wajib menggunakan HTTPS
+2. **Firewall**: Setup UFW atau Cloudflare
+3. **Database Backup**: Automated daily backups
+4. **Monitoring**: Setup logging dan alerting
+5. **Regular Updates**: Update dependencies secara berkala
+6. **Security Audit**: Penetration testing rutin
+
+## 👨‍💻 Development
+
+### Running in Development
+```bash
+php spark serve --port 8080
+```
+
+### Generate Migration
+```bash
+php spark make:migration create_new_table
+```
+
+### Generate Model
+```bash
+php spark make:model NewModel
+```
+
+### Generate Controller
+```bash
+php spark make:controller NewController
+```
+
+### Run Tests
+```bash
+php spark test
+```
+
+### Clear Cache
+```bash
+php spark cache:clear
+php spark debugbar:clear
+```
+
+## 📝 Changelog
+
+### Version 0.2.0 (Current)
+- ✅ Basic authentication system
+- ✅ CSRF protection enabled
+- ✅ Password hashing implemented
+- ✅ Rate limiting filter
+- ✅ Tenant dashboard
+- ✅ Multi-instance support foundation
+- ✅ Portfolio management
+- ✅ Pricing pages
+- ✅ Tenant auth filter
+- ✅ Webhook security library
+
+### Roadmap
+- [ ] Email notification system
+- [ ] Payment gateway integration
+- [ ] Advanced analytics
+- [ ] Bulk messaging with CSV upload
+- [ ] Scheduled messages
+- [ ] API rate limiting per tenant
+- [ ] Two-factor authentication
+- [ ] Mobile app (React Native)
+
+## 🤝 Contributing
+
+Silakan fork repository ini dan buat pull request untuk kontribusi.
+
+## 📄 License
+
+Proprietary - All rights reserved.
+
+## 📞 Support
+
+Untuk dukungan teknis, hubungi:
+- Email: support@yourdomain.com
+- Documentation: https://docs.yourdomain.com
+
+---
+
+**Dibuat dengan ❤️ menggunakan CodeIgniter 4**
