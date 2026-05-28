@@ -1,65 +1,149 @@
-import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, CheckCircle2, TerminalSquare } from "lucide-react";
+import { ContactForm } from "@/components/marketing/contact-form";
+import { MarketingFooter } from "@/components/marketing/footer";
+import { MarketingHeader } from "@/components/marketing/header";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { dashboardStats, portfolioSummaries } from "@/services/cms";
+
+const capabilities = [
+  "CMS publishing workflow",
+  "Pricing and FAQ governance",
+  "Lead routing and qualification",
+  "WhatsApp gateway telemetry",
+  "Webhook and API observability",
+  "Role-based admin access",
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <div className="min-h-screen bg-background text-foreground">
+      <MarketingHeader />
+      <main>
+        <section className="mx-auto grid max-w-6xl gap-10 px-4 py-20 md:grid-cols-[1.05fr_0.95fr] md:items-center">
+          <div className="flex flex-col gap-7">
+            <div className="flex flex-col gap-5">
+              <h1 className="max-w-3xl text-4xl font-semibold tracking-tight md:text-6xl">
+                A calmer operating layer for Rumah Coding.
+              </h1>
+              <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
+                A separate Next.js platform for marketing pages, CMS operations, lead capture,
+                WhatsApp activity, and API documentation while the existing CodeIgniter app keeps running.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button asChild>
+                <Link href="/pricing">
+                  View pricing
+                  <ArrowRight data-icon="inline-end" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/docs/api">Read API docs</Link>
+              </Button>
+            </div>
+          </div>
+          <Card className="overflow-hidden">
+            <CardHeader className="border-b">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <TerminalSquare />
+                Platform status
+              </div>
+              <CardTitle>Migration-ready console</CardTitle>
+              <CardDescription>Designed for reverse proxy deployment later.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-0 p-0">
+              {dashboardStats.map((stat, index) => (
+                <div key={stat.label}>
+                  <div className="flex items-center justify-between px-5 py-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground">{stat.label}</p>
+                      <p className="text-2xl font-semibold">{stat.value}</p>
+                    </div>
+                    <span className="text-sm text-muted-foreground">{stat.change}</span>
+                  </div>
+                  {index < dashboardStats.length - 1 ? <Separator /> : null}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="border-y bg-muted/30">
+          <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[0.8fr_1.2fr]">
+            <div className="flex flex-col gap-3">
+              <h2 className="text-2xl font-semibold tracking-tight">Built as a clean second system.</h2>
+              <p className="leading-7 text-muted-foreground">
+                The app is isolated from the legacy CodeIgniter project and can mature behind a
+                subdomain or reverse proxy before any traffic migration.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {capabilities.map((capability) => (
+                <div key={capability} className="flex items-center gap-3 rounded-md border bg-background p-4">
+                  <CheckCircle2 className="text-muted-foreground" />
+                  <span className="text-sm font-medium">{capability}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-16">
+          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-2xl">
+              <h2 className="text-2xl font-semibold tracking-tight">Selected portfolio</h2>
+              <p className="mt-2 leading-7 text-muted-foreground">
+                Beberapa software dan platform yang pernah saya kerjakan, lengkap dengan konteks masalah dan hasil implementasinya.
+              </p>
+            </div>
+            <Button asChild variant="outline">
+              <Link href="/portfolio">Open portfolio</Link>
+            </Button>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {portfolioSummaries.slice(0, 3).map((project) => (
+              <Card key={project.slug}>
+                <CardHeader className="gap-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <Badge variant="outline">{project.category}</Badge>
+                    <span className="text-sm text-muted-foreground">{project.year}</span>
+                  </div>
+                  <CardTitle>{project.name}</CardTitle>
+                  <CardDescription className="leading-6">{project.summary}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-4">
+                  <div className="flex flex-wrap gap-2">
+                    {project.stack.slice(0, 3).map((item) => (
+                      <Badge key={item} variant="secondary">
+                        {item}
+                      </Badge>
+                    ))}
+                  </div>
+                  <Link href={`/portfolio/${project.slug}`} className="text-sm font-medium">
+                    View case study
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[0.95fr_1.05fr]">
+          <div className="flex flex-col justify-center gap-3">
+            <h2 className="text-2xl font-semibold tracking-tight">Lead capture is ready to persist.</h2>
+            <p className="leading-7 text-muted-foreground">
+              The form uses a server action with validation. Connect it to Prisma once the MySQL
+              database is provisioned for the Next.js app.
+            </p>
+          </div>
+          <ContactForm />
+        </section>
       </main>
+      <MarketingFooter />
     </div>
   );
 }
